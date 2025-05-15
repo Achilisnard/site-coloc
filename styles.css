@@ -1,0 +1,80 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: url('./back.jpg');
+    margin: 0;
+  }
+  
+  header {
+    width: 100%;
+    background-color: #c2af09;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  
+  .navbar a {
+    color: white;
+    text-decoration: none;
+    margin: 0 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .card {
+    width: 200px;
+    height: 300px;
+    perspective: 1000px;
+    margin: 1rem;
+  }
+  
+  .inner-card {
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  
+  .front-achil, .back-achil, .front-popo, .back-popo {
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .front-achil {
+    background: url('starter-pack/achil-recto.jpeg') no-repeat center;
+    background-size: cover;
+  }
+  
+  .back-achil {
+    background: url('starter-pack/achil-verso.jpeg') no-repeat center;
+    background-size: cover;
+    transform: rotateY(180deg);
+  }
+  
+  .front-popo {
+    background: url('starter-pack/popo-recto.jpeg') no-repeat center;
+    background-size: cover;
+  }
+  
+  .back-popo {
+    background: url('starter-pack/popo-verso.jpeg') no-repeat center;
+    background-size: cover;
+    transform: rotateY(180deg);
+  }
