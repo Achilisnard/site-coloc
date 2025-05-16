@@ -14,7 +14,7 @@ document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
       if (!isMouseDown) return;
   
-      const deltaX = e.pageX - startX;
+      const deltaX = (e.pageX - startX)*1.5;
       const cardInner = card.querySelector('.inner-card');
       cardInner.style.transform = `rotateY(${deltaX}deg)`;
     });
