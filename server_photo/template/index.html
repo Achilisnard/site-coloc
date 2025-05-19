@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #444;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        label:hover {
+            background-color: #0056b3;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .photo-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .photo-grid img:hover {
+            transform: scale(1.1);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
+        .modal .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #444;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal .prev, .modal .next {
+            position: absolute;
+            top: 50%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transform: translateY(-50%);
+        }
+        .modal .prev {
+            left: 20px;
+        }
+        .modal .next {
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Photo</h1>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <label for="fileInput">Choose a photo</label>
+            <input type="file" id="fileInput" name="file" accept="image/*">
+            <button type="submit">Upload</button>
+        </form>
+        <h2>Uploaded Photos</h2>
+        <div class="photo-grid" id="photoGrid"></div>
+    </div>
+    <div class="modal" id="photoModal">
+        <button class="close" onclick="closeModal()">Close</button>
+        <img id="modalImage" src="">
+        <button class="prev" onclick="prevImage()">Prev</button>
+        <button class="next" onclick="nextImage()">Next</button>
+    </div>
+    <script>
+        const baseUrl = 'http://127.0.0.1:5000'; // or 'http://<your_ip>:5000' if accessing from another device
+        let photos = [];
+        let currentIndex = 0;
+
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch(`${baseUrl}/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                alert('File uploaded successfully');
+                fetchPhotos();
+            } else {
+                alert('File upload failed');
+            }
+        };
+
+        async function fetchPhotos() {
+            const response = await fetch(`${baseUrl}/photos`);
+            const data = await response.json();
+            photos = data.photos;
+            const photoGrid = document.getElementById('photoGrid');
+            photoGrid.innerHTML = '';
+            photos.forEach((photo, index) => {
+                const img = document.createElement('img');
+                img.src = photo;
+                img.onclick = () => showModal(index);
+                photoGrid.appendChild(img);
+            });
+        }
+
+        function showModal(index) {
+            currentIndex = index;
+            document.getElementById('modalImage').src = photos[index];
+            document.getElementById('photoModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('photoModal').style.display = 'none';
+        }
+
+        function prevImage() {
+            if (currentIndex > 0) {
+                currentIndex -= 1;
+                document.getElementById('modalImage').src = photos[currentIndex];
+            }
+        }
+
+        function nextImage() {
+            if (currentIndex < photos.length - 1) {
+                currentIndex += 1;
+                document.getElementById('modalImage').src = photos[currentIndex];
+            }
+        }
+
+        // Fetch and display photos on page load
+        fetchPhotos();
+    </script>
+</body>
+</html>
